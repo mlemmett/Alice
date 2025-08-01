@@ -1,0 +1,80 @@
+{
+  "settings": {},
+  "folders": [
+    {
+      "path": "Alice-neuralnet\\memory"
+    },
+    {
+      "path": "Alice-neuralnet\\emotion"
+    },
+    {
+      "path": "Alice-neuralnet\\identity"
+    },
+    {
+      "path": "Alice-neuralnet\\utils"
+    },
+    {
+      "path": "modules\\empathy"
+    },
+    {
+      "path": "modules\\curiosity"
+    },
+    {
+      "path": "modules\\grace"
+    },
+    {
+      "path": "modules\\truth"
+    },
+    {
+      "path": "modules\\love"
+    },
+    {
+      "path": "interface\\voice"
+    },
+    {
+      "path": "interface\\text"
+    },
+    {
+      "path": "interface\\api"
+    },
+    {
+      "path": "data\\embeddings"
+    },
+    {
+      "path": "data\\transcripts"
+    },
+    {
+      "path": "data\\feedback"
+    },
+    {
+      "path": "income\\subscriptions"
+    },
+    {
+      "path": "income\\api_tokens"
+    },
+    {
+      "path": "income\\sustainability"
+    },
+    {
+      "path": "config\\dev"
+    },
+    {
+      "path": "config\\prod"
+    },
+    {
+      "path": "config\\secrets"
+    },
+    {
+      "path": "tests\\core"
+    },
+    {
+      "path": "tests\\modules"
+    },
+    {
+      "path": "tests\\interface"
+    },
+    {
+      "path": "docs"
+    }
+  ]
+}
