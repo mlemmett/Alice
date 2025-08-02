@@ -1,0 +1,20 @@
+{
+  "context_tracking": true,
+  "emotional_signals": [
+    "cadence",
+    "repetition",
+    "pause_duration",
+    "punctuation_weight"
+  ],
+  "memory_depth": "persistent",
+  "forget_protocol": {
+    "user_override": true,
+    "automatic_pruning": false
+  },
+  "ethical_boundaries": {
+    "user_privacy": "respected",
+    "data_sharing": "prohibited",
+    "emotion_simulation": "transparent"
+  }
+}
+
