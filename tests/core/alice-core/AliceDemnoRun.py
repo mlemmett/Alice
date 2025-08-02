@@ -1,3 +1,10 @@
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://your-dsn@sentry.io/project-id",
+    traces_sample_rate=1.0,
+    environment="development"
+)
 # AliceDemoRun.py
 # Simulates Alice's greeting, emotional analysis, memory recall, and centering
 
