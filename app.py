@@ -20,8 +20,14 @@ def save_memory(data):
 
 @app.route("/memory/store", methods=["POST"])
 def store_memory():
-    data = request.json
+    data = request.json or {}
 
+    # Apply governance rules
+    allowed, message = apply_governance(data)
+    if not allowed:
+        return jsonify({"status": message}), 400
+
+    # Build the memory object
     memory = {
         "id": str(uuid.uuid4()),
         "type": data.get("type", "episodic"),
@@ -31,11 +37,13 @@ def store_memory():
         "timestamp": datetime.datetime.utcnow().isoformat()
     }
 
-    mem = load_memory()
-    mem.append(memory)
-    save_memory(mem)
+    # Load, append, save
+    all_memory = load_memory()
+    all_memory.append(memory)
+    save_memory(all_memory)
 
     return jsonify({"status": "stored", "id": memory["id"]})
+
 
 @app.route("/memory/query", methods=["POST"])
 def query_memory():
