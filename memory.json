@@ -1,0 +1,22 @@
+[
+  {
+    "id": "uuid",
+    "type": "episodic",
+    "content": "string",
+    "tags": [
+      "string"
+    ],
+    "importance": 0.42,
+    "timestamp": "ISO-8601"
+  },
+  {
+    "id": "1e7cf6ad-4633-4cc1-84c6-f15daf3be6d7",
+    "type": "episodic",
+    "content": "hello alice",
+    "tags": [
+      "test"
+    ],
+    "importance": 0.7,
+    "timestamp": "2026-02-23T01:06:52.257040"
+  }
+]
