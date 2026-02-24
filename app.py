@@ -1,22 +1,19 @@
 import os
+import uuid
+import json
+import datetime
+from flask import Flask, request, jsonify
 from ollama import Client
 
-# Initialize the client using Render's environment variables
+# LINE 11 STARTS HERE:
 client = Client(
     host=os.getenv("OLLAMA_HOST", "https://ollama.com"),
     headers={'Authorization': f'Bearer {os.getenv("OLLAMA_API_KEY")}'}
 )
+# LINE 11 ENDS HERE (the ')' above is the closer)
 
-# Example function to call your cloud model
-def get_ai_response(user_input):
-    response = client.chat(
-        model='qwen3-coder:480b-cloud',
-        messages=[{'role': 'user', 'content': user_input}]
-    )
-    return response.message.content
-
+# LINE 14 STARTS HERE:
 app = Flask(__name__)
-
 MEMORY_FILE = "memory.json"
 
 # Load or initialize memory file
