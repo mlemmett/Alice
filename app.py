@@ -84,6 +84,25 @@ def delete_memory():
     save_memory(mem)
     return jsonify({"status": "deleted"})
 
+# The "Home" page you see in the browser
+@app.route('/')
+def home():
+    return "<h1>Alice is Online</h1><p>The cloud brain is connected. Send a POST request to /chat to talk!</p>"
+
+# The route that actually talks to the AI
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_message = data.get("message", "")
+    
+    if not user_message:
+        return jsonify({"error": "No message provided"}), 400
+
+    # This calls your cloud model function!
+    ai_text = get_ai_response(user_message)
+    
+    return jsonify({"response": ai_text})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
 
