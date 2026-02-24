@@ -3,3 +3,4 @@ gunicorn
 numpy
 nltk
 sentry-sdk
+ollama
