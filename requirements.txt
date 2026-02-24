@@ -1,6 +1,6 @@
+ollama
 flask
 gunicorn
 numpy
 nltk
 sentry-sdk
-ollama
