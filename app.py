@@ -99,7 +99,22 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     # This calls your cloud model function!
-    ai_text = get_ai_response(user_message)
+    def get_ai_response(user_input):
+    try:
+        # Step 1: Send your message to the cloud
+        response = client.chat(
+            model=MODEL_NAME,
+            messages=[{'role': 'user', 'content': user_input}]
+        )
+        
+        # Step 2: Access the reply (NEW WAY)
+        # We use .message.content instead of ['message']['content']
+        return response.message.content 
+        
+    except Exception as e:
+        # Step 3: If it fails, show the REAL error in your chat box
+        print(f"Ollama Error: {e}")
+        return f"Error: {str(e)}"
     
     return jsonify({"response": ai_text})
 
