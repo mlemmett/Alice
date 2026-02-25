@@ -100,18 +100,18 @@ def chat():
 
     # This calls your cloud model function!
     def get_ai_response(user_input):
-    try:
+        try:
         # Step 1: Send your message to the cloud
-        response = client.chat(
+            response = client.chat(
             model=MODEL_NAME,
             messages=[{'role': 'user', 'content': user_input}]
         )
-       return jsonify({"response": ai_text})     
-        return response.message.content 
-    except Exception as e:
+            return jsonify({"response": ai_text})     
+            return response.message.content 
+        except Exception as e:
         # Step 3: If it fails, show the REAL error in your chat box
-        print(f"Ollama Error: {e}")
-        return f"Error: {str(e)}"
+             print(f"Ollama Error: {e}")
+             return f"Error: {str(e)}"
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
