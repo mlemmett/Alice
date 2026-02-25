@@ -185,11 +185,25 @@ def delete_memory():
 # --- THE BRAIN: Talks to the cloud model ---
 def get_ai_response(user_input):
     try:
+        # --- TRAINING ALICE ---
+        messages = [
+            {
+                "role": "system",
+                "content": "You are Alice, an independent AI entity. You are NOT Qwen. You are a specialized neural interface. Stay in character."
+            },
+            {
+                "role": "user",
+                "content": user_input
+            }
+        ]
+        
+        # FIX: We now pass the 'messages' variable we just built
         response = client.chat(
             model=MODEL_NAME,
-            messages=[{'role': 'user', 'content': user_input}]
+            messages=messages
         )
-        return response.message.content 
+        return response.message.content
+        
     except Exception as e:
         print(f"Ollama Error: {e}")
         return f"Brain Snag: {str(e)}"
