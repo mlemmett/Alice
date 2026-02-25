@@ -28,13 +28,15 @@ def neural_interface():
 
         # THE AI BRAIN CONNECTION
         try:
-            response = requests.post(
-                'http://localhost:11434/api/generate',
+          response = requests.post(
+                f"{host}/api/generate",
+                headers={"Authorization": f"Bearer {api_key}"},
                 json={
                     "model": "llama3", # or "mistral" depending on what you have
                     "prompt": user_text,
                     "stream": False
-                }
+                },
+                timeout=15 # Gives the AI time to think
             )
             # Pulling the AI's actual thoughts
             alice_reply = response.json().get('response', 'SYSTEM: Link timeout.')
