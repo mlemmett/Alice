@@ -32,22 +32,21 @@ def heartbeat():
 
 # 2. The Background Worker: Pings the app every 12 minutes
 def keep_alive():
-    # Replace with your actual Render URL (found in your Render Dashboard)
+    # FIX: Corrected URL with proper quotes
     url = "https://alice-lb3p.onrender.com/heartbeat"
     while True:
         try:
-            # Send a request to yourself
             requests.get(url)
-            print("Alice: Sent a heartbeat to stay awake.")
-        except Exception as e:
-            print(f"Heartbeat failed.")
-         time.sleep(720)
-# 3. Start the thread when the app launches
- threading.Thread(target=keep_alive, daemon=True).start()
-# We check __name__ to make sure it only starts once
+        except:
+            # Silently handle connection errors
+            pass
+        time.sleep(720) 
+
+# FIX: Start the background thread so it actually runs
+threading.Thread(target=keep_alive, daemon=True).start()
+
 if __name__ == "__main__":
-    # daemon=True ensures the thread dies if the main app stops
-   
+    # Ensure Alice listens on the port Render expects
     app.run(host="0.0.0.0", port=10000)
 # Load or initialize memory file
 if not os.path.exists(MEMORY_FILE):
