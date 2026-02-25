@@ -1,6 +1,7 @@
 ollama
 flask
 gunicorn
+#...any other dependencies
 numpy
 nltk
 sentry-sdk
