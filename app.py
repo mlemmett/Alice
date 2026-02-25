@@ -16,7 +16,11 @@ import time
 import requests
 from flask import Flask
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
 # 1. The 'Self-Ping' Route: Lightweight and fast
