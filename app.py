@@ -2,144 +2,58 @@ import os
 import uuid
 import json
 import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from ollama import Client
-
-client = Client(
-    host=os.getenv("OLLAMA_HOST", "https://ollama.com"),
-    headers={'Authorization': f'Bearer {os.getenv("OLLAMA_API_KEY")}'}
-)
-
-# LINE 14 STARTS HERE:
-from flask import Flask, render_template
 import threading
 import requests
 import time
 
+# Initialize Ollama client
+client = Client(
+    host=os.getenv("OLLAMA_HOST", "https://ollama.com"),
+    headers={'Authorization': f'Bearer {os.getenv("OLLAMA_API_KEY")}'},
+)
 
-
-app = Flask(__name__, template_folder='.')
-
-@app.route('/', methods=['GET', 'POST'])
-def neural_interface():
-    if request.method == 'POST':
-        data = request.get_json()
-        user_text = data.get('message', '')
-
-        # THE AI BRAIN CONNECTION
-        try:
-          response = requests.post(
-                f"{host}/api/generate",
-                headers={"Authorization": f"Bearer {api_key}"},
-                json={
-                    "model": "llama3", # or "mistral" depending on what you have
-                    "prompt": user_text,
-                    "stream": False
-                },
-                timeout=15 # Gives the AI time to think
-            )
-            # Pulling the AI's actual thoughts
-                    alice_reply = response.json().get('response', 'SYSTEM: Link timeout.')
-        except Exception as e:
-                    alice_reply = f"SYSTEM ERROR: Brain offline. {str(e)}"
-
-            return jsonify({"reply": alice_reply}) 
-        return render_template('index.html')
+# Configuration
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
-# 1. The 'Self-Ping' Route: Lightweight and fast
-@app.route('/heartbeat')
-def heartbeat():
-    return "Heartbeat received", 200
 
-# 2. The Background Worker: Pings the app every 12 minutes
-def keep_alive():
-    # FIX: Corrected URL with proper quotes
-    url = "https://alice-lb3p.onrender.com/heartbeat"
-    while True:
-        try:
-            requests.get(url)
-        except:
-            # Silently handle connection errors
-            pass
-        time.sleep(720) 
+# Initialize Flask app
+app = Flask(__name__, template_folder='.')
 
-# FIX: Start the background thread so it actually runs
-threading.Thread(target=keep_alive, daemon=True).start()
-
-if __name__ == "__main__":
-    # Ensure Alice listens on the port Render expects
-    app.run(host="0.0.0.0", port=10000)
-# Load or initialize memory file
-if not os.path.exists(MEMORY_FILE):
-    with open(MEMORY_FILE, "w") as f:
-        json.dump([], f)
-
+# --- MEMORY MANAGEMENT ---
 def load_memory():
     with open(MEMORY_FILE, "r") as f:
         return json.load(f)
+
 
 def save_memory(data):
     with open(MEMORY_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
-@app.route("/memory/store", methods=["POST"])
-def store_memory():
-    data = request.json or {}
+# Load or initialize memory file
+if not os.path.exists(MEMORY_FILE):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump([], f)
 
-    # Apply governance rules
-    allowed, message = apply_governance(data)
-    if not allowed:
-        return jsonify({"status": message}), 400
+# --- GOVERNANCE RULES ---
+def apply_governance(data):
+    """Apply governance rules to memory storage."""
+    content = data.get("content", "")
+    if not content:
+        return False, "Content cannot be empty"
+    if len(content) > 10000:
+        return False, "Content exceeds maximum length"
+    return True, "Governance check passed"
 
-    # Build the memory object
-    memory = {
-        "id": str(uuid.uuid4()),
-        "type": data.get("type", "episodic"),
-        "content": data.get("content", ""),
-        "tags": data.get("tags", []),
-        "importance": data.get("importance", 0.5),
-        "timestamp": datetime.datetime.utcnow().isoformat()
-    }
+# --- ROUTES ---
 
-    # Load, append, save
-    all_memory = load_memory()
-    all_memory.append(memory)
-    save_memory(all_memory)
+# 1. The 'Self-Ping' Route: Lightweight and fast
+@app.route('/heartbeat')
+def heartbeat():
+    return "Heartbeat received", 200
 
-    return jsonify({"status": "stored", "id": memory["id"]})
-
-
-@app.route("/memory/query", methods=["POST"])
-def query_memory():
-    query = request.json
-    mem = load_memory()
-    results = []
-
-    for m in mem:
-        if query.get("type") and m["type"] != query["type"]:
-            continue
-        if query.get("tags"):
-            if not any(tag in m["tags"] for tag in query["tags"]):
-                continue
-        if query.get("keyword") and query["keyword"] not in m["content"]:
-            continue
-        if query.get("min_importance") and m["importance"] < query["min_importance"]:
-            continue
-        results.append(m)
-
-    return jsonify({"results": results})
-
-@app.route("/memory/delete", methods=["DELETE"])
-def delete_memory():
-    mem_id = request.json.get("id")
-    mem = load_memory()
-    mem = [m for m in mem if m["id"] != mem_id]
-    save_memory(mem)
-    return jsonify({"status": "deleted"})
-
-# The "Home" page you see in the browser
-@app.route('/')
+# 2. The Home page - Neural Interface
 @app.route('/')
 def home():
     return """
@@ -174,7 +88,7 @@ def home():
                     if (!input.value.trim()) return;
 
                     const userText = input.value;
-                    box.innerHTML += `<div class="msg user-msg"><b>User:</b> ${userText}</div>`;
+                    box.innerHTML += `<div class=\"msg user-msg\"><b>User:</b> ${userText}</div>`;
                     input.value = 'Processing...';
                     input.disabled = true;
 
@@ -184,7 +98,7 @@ def home():
                         body: JSON.stringify({ message: userText })
                     });
                     const data = await response.json();
-                    box.innerHTML += `<div class="msg"><b>Alice:</b> ${data.response}</div>`;
+                    box.innerHTML += `<div class=\"msg\"><b>Alice:</b> ${data.response}</div>`;
                     
                     input.value = '';
                     input.disabled = false;
@@ -196,7 +110,7 @@ def home():
     </html>
     """
 
-# --- THE BRIDGE: Receives your text from the website ---
+# 3. The chat endpoint - Bridge between frontend and AI
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
@@ -205,11 +119,68 @@ def chat():
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
 
-    # This calls the "Brain" function below
+    # Call the AI brain function
     ai_text = get_ai_response(user_message)
     
-    # This sends Alice's final answer back to the screen
+    # Return Alice's response
     return jsonify({"response": ai_text})
+
+# 4. Memory storage endpoint
+@app.route("/memory/store", methods=["POST"])
+def store_memory_route():
+    data = request.json or {}
+
+    # Apply governance rules
+    allowed, message = apply_governance(data)
+    if not allowed:
+        return jsonify({"status": message}), 400
+
+    # Build the memory object
+    memory = {
+        "id": str(uuid.uuid4()),
+        "type": data.get("type", "episodic"),
+        "content": data.get("content", ""),
+        "tags": data.get("tags", []),
+        "importance": data.get("importance", 0.5),
+        "timestamp": datetime.datetime.utcnow().isoformat()
+    }
+
+    # Load, append, save
+    all_memory = load_memory()
+    all_memory.append(memory)
+    save_memory(all_memory)
+
+    return jsonify({"status": "stored", "id": memory["id"]})
+
+# 5. Memory query endpoint
+@app.route("/memory/query", methods=["POST"])
+def query_memory():
+    query = request.json
+    mem = load_memory()
+    results = []
+
+    for m in mem:
+        if query.get("type") and m["type"] != query["type"]:
+            continue
+        if query.get("tags"):
+            if not any(tag in m["tags"] for tag in query["tags"]):
+                continue
+        if query.get("keyword") and query["keyword"] not in m["content"]:
+            continue
+        if query.get("min_importance") and m["importance"] < query["min_importance"]:
+            continue
+        results.append(m)
+
+    return jsonify({"results": results})
+
+# 6. Memory delete endpoint
+@app.route("/memory/delete", methods=["DELETE"])
+def delete_memory():
+    mem_id = request.json.get("id")
+    mem = load_memory()
+    mem = [m for m in mem if m["id"] != mem_id]
+    save_memory(mem)
+    return jsonify({"status": "deleted"})
 
 # --- THE BRAIN: Talks to the cloud model ---
 def get_ai_response(user_input):
@@ -223,8 +194,23 @@ def get_ai_response(user_input):
         print(f"Ollama Error: {e}")
         return f"Brain Snag: {str(e)}"
 
-# --- THE POWER SWITCH: Keeps the server alive ---
-if __name__ == "__main__":
-    # Ensure port uses Render's environment variable
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+# --- BACKGROUND WORKER: Keeps the app alive ---
+def keep_alive():
+    """Pings the app every 12 minutes to prevent sleeping."""
+    url = "https://alice-lb3p.onrender.com/heartbeat"
+    while True:
+        try:
+            requests.get(url)
+        except:
+            # Silently handle connection errors
+            pass
+        time.sleep(720)  # 12 minutes
 
+# --- MAIN ENTRY POINT ---
+if __name__ == '__main__':
+    # Start the background thread so it keeps the server alive
+    threading.Thread(target=keep_alive, daemon=True).start()
+    
+    # Ensure Alice listens on the port Render expects
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
