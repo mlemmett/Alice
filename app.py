@@ -23,9 +23,14 @@ app = Flask(__name__, template_folder='.')
 @app.route('/', methods=['GET', 'POST'])
 def neural_interface():
     if request.method == 'POST':
-        user_message = request.json.get('message')
-        # This sends a response back to your phone screen
-        return jsonify({"reply": f"SYSTEM: Received '{user_message}'. Link stable."})
+        # This pulls the 'message' you typed on your phone
+        data = request.get_json()
+        user_text = data.get('message', '')
+        
+        # This is where we create the reply
+        reply_text = f"ALICE: Analysis complete. You said: '{user_text}'"
+       
+        return jsonify({"reply": reply_text})
     return render_template('index.html')
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
