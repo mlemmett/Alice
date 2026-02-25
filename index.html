@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .interface-container {
+            /* Responsive width for your phone */
+            width: 92%;
+            max-width: 500px;
+            border: 1px solid #00ffcc;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+            box-sizing: border-box;
+        }
+        #chat-window {
+            height: 300px;
+            overflow-y: auto;
+            border-bottom: 1px solid #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="interface-container">
+        <h3>Alice Neural Interface</h3>
+        <div id="chat-window"></div>
+        <input type="text" style="width:100%;" placeholder="Initiate...">
+    </div>
+</body>
+</html>
