@@ -43,8 +43,8 @@ def neural_interface():
         except Exception as e:
                     alice_reply = f"SYSTEM ERROR: Brain offline. {str(e)}"
 
-        return jsonify({"reply": alice_reply}) 
-    return render_template('index.html')
+            return jsonify({"reply": alice_reply}) 
+        return render_template('index.html')
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
 # 1. The 'Self-Ping' Route: Lightweight and fast
