@@ -5,18 +5,47 @@ import datetime
 from flask import Flask, request, jsonify
 from ollama import Client
 
-# LINE 11 STARTS HERE:
 client = Client(
     host=os.getenv("OLLAMA_HOST", "https://ollama.com"),
     headers={'Authorization': f'Bearer {os.getenv("OLLAMA_API_KEY")}'}
 )
-# LINE 11 ENDS HERE (the ')' above is the closer)
 
 # LINE 14 STARTS HERE:
+import threading
+import time
+import requests
+from flask import Flask
+
 app = Flask(__name__)
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
+# 1. The 'Self-Ping' Route: Lightweight and fast
+@app.route('/heartbeat')
+def heartbeat():
+    return "Heartbeat received", 200
 
+# 2. The Background Worker: Pings the app every 12 minutes
+def keep_alive():
+    # Replace with your actual Render URL (found in your Render Dashboard)
+    url = "https://your-alice-app-name.onrender.com/heartbeat"
+    while True:
+        try:
+            # Send a request to yourself
+            requests.get(url)
+            print("Alice: Sent a heartbeat to stay awake.")
+        except Exception as e:
+            print(f"Heartbeat failed: {e}")
+        
+        # Sleep for 12 minutes (720 seconds)
+        # Render's free tier sleep kicks in at 15 minutes.
+        time.sleep(720)
+
+# 3. Start the thread when the app launches
+# We check __name__ to make sure it only starts once
+if __name__ == "__main__":
+    # daemon=True ensures the thread dies if the main app stops
+    threading.Thread(target=keep_alive, daemon=True).start()
+    app.run()
 # Load or initialize memory file
 if not os.path.exists(MEMORY_FILE):
     with open(MEMORY_FILE, "w") as f:
