@@ -2,6 +2,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+ <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="apple-touch-icon" href="https://img.icons8.com/nolan/512/ai.png">
+<title>ALICE NEURAL LINK</title>
+
+<style>
+    /* This ensures the app doesn't "bounce" or scroll weirdly on iPhone */
+    body {
+        position: fixed;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+    .interface-container {
+        height: 100vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+</style>  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Alice Neural Interface</title>
@@ -17,6 +37,9 @@
             height: 100vh;
         }
         .interface-container {
+            padding-bottom: env(safe-area-inset-bottom); /* Protects the 'Home Bar' area */
+            padding-top: env(safe-area-inset-top);       /* Protects the 'Notch' area */
+        }  
             width: 90%;
             max-width: 500px;
             min-height: 300px; /* Forces it to have height */
