@@ -38,36 +38,34 @@
         <div style="margin-top: 40px; border: 1px solid #333; padding: 10px; color: #666;">
             Waiting for input...
 <div class="interface-container">
-        <div style="margin-top: 40px;">
-            <input type="text" id="user-input" placeholder="TYPE COMMAND HERE..." 
-                   style="width: 100%; padding: 15px; background: #000; color: #00ffcc; border: 1px solid #00ffcc; font-family: 'Courier New', monospace; font-size: 16px; box-sizing: border-box; outline: none;">
-        </div>
-    </div> 
+   <div style="margin-top: 40px;">
+        <input type="text" id="user-input" placeholder="TYPE COMMAND HERE..." 
+               style="width: 100%; padding: 15px; background: #000; color: #00ffcc; border: 1px solid #00ffcc; font-family: 'Courier New', monospace; font-size: 16px; box-sizing: border-box; outline: none;">
+    </div>
+</div> <script>
+    const input = document.getElementById('user-input');
+    const container = document.querySelector('.interface-container');
 
-    <script>
-        const input = document.getElementById('user-input');
-        const container = document.querySelector('.interface-container');
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const msg = input.value;
+            if (!msg) return;
+            input.value = ''; 
 
-        input.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                const msg = input.value;
-                if (!msg) return;
-                input.value = ''; 
-
-                fetch('/', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({message: msg})
-                })
-                .then(res => res.json())
-                .then(data => {
-                    const p = document.createElement('p');
-                    p.textContent = "> " + data.reply;
-                    p.style.color = "#00ffcc";
-                    container.appendChild(p);
-                });
-            }
-        });
-    </script>
+            fetch('/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msg})
+            })
+            .then(res => res.json())
+            .then(data => {
+                const p = document.createElement('p');
+                p.textContent = "> " + data.reply;
+                p.style.color = "#00ffcc";
+                container.appendChild(p);
+            });
+        }
+    });
+</script>
 </body>
-</html>   
+</html>    
