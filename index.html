@@ -1,40 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alice Neural Interface</title>
     <style>
         body {
-            background-color: #0a0a0a;
-            color: #00ffcc;
+            background-color: #000000; /* Pure black */
+            color: #00ffcc;           /* Alice Cyan */
             font-family: 'Courier New', monospace;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            height: 100vh;
         }
         .interface-container {
-            /* Responsive width for your phone */
-            width: 92%;
+            width: 90%;
             max-width: 500px;
-            border: 1px solid #00ffcc;
+            min-height: 300px; /* Forces it to have height */
+            border: 2px solid #00ffcc; /* Thick glowing border */
             padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+            background: #111111;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
             box-sizing: border-box;
-        }
-        #chat-window {
-            height: 300px;
-            overflow-y: auto;
-            border-bottom: 1px solid #333;
-            margin-bottom: 10px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="interface-container">
-        <h3>Alice Neural Interface</h3>
-        <div id="chat-window"></div>
-        <input type="text" style="width:100%;" placeholder="Initiate...">
+        <h2 style="margin-top: 0;">ALICE NEURAL INTERFACE</h2>
+        <hr style="border: 0.5px solid #333;">
+        <p style="margin-top: 20px;">> SYSTEM ONLINE</p>
+        <p>> ENCRYPTION ACTIVE</p>
+        <div style="margin-top: 40px; border: 1px solid #333; padding: 10px; color: #666;">
+            Waiting for input...
+        </div>
     </div>
 </body>
 </html>
