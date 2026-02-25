@@ -105,8 +105,7 @@ def chat():
             response = client.chat(
             model=MODEL_NAME,
             messages=[{'role': 'user', 'content': user_input}]
-        )
-            return jsonify({"response": ai_text})     
+        )    
             return response.message.content 
         except Exception as e:
         # Step 3: If it fails, show the REAL error in your chat box
