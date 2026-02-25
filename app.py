@@ -20,8 +20,12 @@ import time
 
 app = Flask(__name__, template_folder='.')
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def neural_interface():
+    if request.method == 'POST':
+        user_input = request.json.get('message')
+        # This is where Alice's brain will eventually process the data
+        return jsonify({"response": f"Alice received: {user_input}"})
     return render_template('index.html')
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
