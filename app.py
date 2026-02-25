@@ -23,7 +23,7 @@ app = Flask(__name__, template_folder='.')
 @app.route('/', methods=['GET', 'POST'])
 def neural_interface():
     if request.method == 'POST':
-   data = request.get_json()
+        data = request.get_json()
         user_text = data.get('message', '')
 
         # THE AI BRAIN CONNECTION
