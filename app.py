@@ -86,8 +86,61 @@ def delete_memory():
 
 # The "Home" page you see in the browser
 @app.route('/')
+@app.route('/')
 def home():
-    return "<h1>Alice is Online</h1><p>The cloud brain is connected. Send a POST request to /chat to talk!</p>"
+    return """
+    <html>
+        <head>
+            <title>Alice AI</title>
+            <style>
+                body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #00ffcc; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+                #chat-container { width: 90%; max-width: 600px; background: #1a1a1a; border-radius: 15px; padding: 20px; box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
+                #chat-box { height: 400px; overflow-y: auto; margin-bottom: 20px; border-bottom: 1px solid #333; padding: 10px; }
+                .input-group { display: flex; gap: 10px; }
+                input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: white; outline: none; }
+                button { padding: 12px 24px; border-radius: 8px; border: none; background: #00ffcc; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; }
+                button:hover { background: #00cca3; }
+                .msg { margin-bottom: 15px; line-height: 1.4; }
+                .user-msg { color: #888; }
+            </style>
+        </head>
+        <body>
+            <div id="chat-container">
+                <h2 style="text-align: center;">Alice Neural Interface</h2>
+                <div id="chat-box"></div>
+                <div class="input-group">
+                    <input type="text" id="user-input" placeholder="Initiate communication..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+            <script>
+                async function sendMessage() {
+                    const input = document.getElementById('user-input');
+                    const box = document.getElementById('chat-box');
+                    if (!input.value.trim()) return;
+
+                    const userText = input.value;
+                    box.innerHTML += `<div class="msg user-msg"><b>User:</b> ${userText}</div>`;
+                    input.value = 'Processing...';
+                    input.disabled = true;
+
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: userText })
+                    });
+                    const data = await response.json();
+                    box.innerHTML += `<div class="msg"><b>Alice:</b> ${data.response}</div>`;
+                    
+                    input.value = '';
+                    input.disabled = false;
+                    input.focus();
+                    box.scrollTop = box.scrollHeight;
+                }
+            </script>
+        </body>
+    </html>
+    """
 
 # The route that actually talks to the AI
 @app.route('/chat', methods=['POST'])
