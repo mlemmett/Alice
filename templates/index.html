@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="apple-touch-icon" href="https://img.icons8.com/nolan/512/ai.png">
+<title>ALICE NEURAL LINK</title>
 
+<style>
+    /* This ensures the app doesn't "bounce" or scroll weirdly on iPhone */
+    body {
+        position: fixed;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+    .interface-container {
+        height: 100vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+</style>  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alice Neural Interface</title>
+    <style>
+        body {
+            background-color: #000000; /* Pure black */
+            color: #00ffcc;           /* Alice Cyan */
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .interface-container {
+            padding-bottom: env(safe-area-inset-bottom); /* Protects the 'Home Bar' area */
+            padding-top: env(safe-area-inset-top);       /* Protects the 'Notch' area */
+        }  
+            width: 90%;
+            max-width: 500px;
+            min-height: 300px; /* Forces it to have height */
+            border: 2px solid #00ffcc; /* Thick glowing border */
+            padding: 20px;
+            background: #111111;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            box-sizing: border-box;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="interface-container">
+        <h2 style="margin-top: 0;">ALICE NEURAL INTERFACE</h2>
+        <hr style="border: 0.5px solid #333;">
+        <p style="margin-top: 20px;">> SYSTEM ONLINE</p>
+        <p>> ENCRYPTION ACTIVE</p>
+        <div style="margin-top: 40px; border: 1px solid #333; padding: 10px; color: #666;">
+            Waiting for input...
+<div class="interface-container">
+   <div style="margin-top: 40px;">
+        <input type="text" id="user-input" placeholder="TYPE COMMAND HERE..." 
+               style="width: 100%; padding: 15px; background: #000; color: #00ffcc; border: 1px solid #00ffcc; font-family: 'Courier New', monospace; font-size: 16px; box-sizing: border-box; outline: none;">
+    </div>
+</div> <script>
+    const input = document.getElementById('user-input');
+    const container = document.querySelector('.interface-container');
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const msg = input.value;
+            if (!msg) return;
+            input.value = ''; 
+
+            fetch('/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msg})
+            })
+            .then(res => res.json())
+            .then(data => {
+                const p = document.createElement('p');
+                p.textContent = "> " + data.reply;
+                p.style.color = "#00ffcc";
+                container.appendChild(p);
+            });
+        }
+    });
+</script>
+</body>
+</html>    
