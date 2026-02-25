@@ -37,47 +37,37 @@
         <p>> ENCRYPTION ACTIVE</p>
         <div style="margin-top: 40px; border: 1px solid #333; padding: 10px; color: #666;">
             Waiting for input...
+<div class="interface-container">
+        <div style="margin-top: 40px;">
+            <input type="text" id="user-input" placeholder="TYPE COMMAND HERE..." 
+                   style="width: 100%; padding: 15px; background: #000; color: #00ffcc; border: 1px solid #00ffcc; font-family: 'Courier New', monospace; font-size: 16px; box-sizing: border-box; outline: none;">
         </div>
-    </div>
-<script>
-    const input = document.querySelector('input');
-    const container = document.querySelector('.interface-container');
+    </div> 
 
-    input.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            const msg = input.value;
-            if (!msg) return;
+    <script>
+        const input = document.getElementById('user-input');
+        const container = document.querySelector('.interface-container');
 
-            input.value = ''; // Clear box immediately for a fast feel
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const msg = input.value;
+                if (!msg) return;
+                input.value = ''; 
 
-            // This sends the text from your phone to your Render server
-            fetch('/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({message: msg})
-            })
-            .then(res => res.json())
-            .then(data => {
-                const p = document.createElement('p');
-                p.textContent = "> " + data.reply;
-                p.style.color = "#00ffcc";
-                container.appendChild(p);
-            });
-        }
-    });
-</script>
-<div style="margin-top: 40px;">
-    <input type="text" id="user-input"
-           placeholder="TYPE COMMAND HERE..." 
-           style="width: 100%; 
-                  padding: 15px; 
-                  background: #000; 
-                  color: #00ffcc; 
-                  border: 1px solid #00ffcc; 
-                  font-family: 'Courier New', monospace;
-                  font-size: 16px; /* Prevents iPhone from zooming in */
-                  box-sizing: border-box;
-                  outline: none;">
-</div>
+                fetch('/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: msg})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    const p = document.createElement('p');
+                    p.textContent = "> " + data.reply;
+                    p.style.color = "#00ffcc";
+                    container.appendChild(p);
+                });
+            }
+        });
+    </script>
 </body>
-</html>
+</html>   
