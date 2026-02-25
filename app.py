@@ -142,25 +142,35 @@ def home():
     </html>
     """
 
-# The route that actually talks to the AI
+# --- THE BRIDGE: Receives your text from the website ---
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
     user_message = data.get("message", "")
+    
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
-        ai_text = get_ai_response(user_message)
-        return jsonify({"response": ai_text})
-        try:
-            response = client.chat(
-                model=MODEL_NAME,
-                messages=[{'role': 'user', 
-'content': user_input}]
-        )    
-            return response.message.content 
-        except Exception as e:
-             print(f"Ollama Error: {e}")
-             return f"Error: {str(e)}"
+
+    # This calls the "Brain" function below
+    ai_text = get_ai_response(user_message)
+    
+    # This sends Alice's final answer back to the screen
+    return jsonify({"response": ai_text})
+
+# --- THE BRAIN: Talks to the cloud model ---
+def get_ai_response(user_input):
+    try:
+        response = client.chat(
+            model=MODEL_NAME,
+            messages=[{'role': 'user', 'content': user_input}]
+        )
+        return response.message.content 
+    except Exception as e:
+        print(f"Ollama Error: {e}")
+        return f"Brain Snag: {str(e)}"
+
+# --- THE POWER SWITCH: Keeps the server alive ---
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    # Ensure port uses Render's environment variable
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 
