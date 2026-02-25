@@ -23,14 +23,25 @@ app = Flask(__name__, template_folder='.')
 @app.route('/', methods=['GET', 'POST'])
 def neural_interface():
     if request.method == 'POST':
-        # This pulls the 'message' you typed on your phone
-        data = request.get_json()
+   data = request.get_json()
         user_text = data.get('message', '')
-        
-        # This is where we create the reply
-        reply_text = f"ALICE: Analysis complete. You said: '{user_text}'"
-       
-        return jsonify({"reply": reply_text})
+
+        # THE AI BRAIN CONNECTION
+        try:
+            response = requests.post(
+                'http://localhost:11434/api/generate',
+                json={
+                    "model": "llama3", # or "mistral" depending on what you have
+                    "prompt": user_text,
+                    "stream": False
+                }
+            )
+            # Pulling the AI's actual thoughts
+            alice_reply = response.json().get('response', 'SYSTEM: Link timeout.')
+        except Exception as e:
+            alice_reply = f"SYSTEM ERROR: Brain offline. {str(e)}"
+
+        return jsonify({"reply": alice_reply}) 
     return render_template('index.html')
 MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
