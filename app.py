@@ -14,6 +14,7 @@ client = Client(
 
 # LINE 14 STARTS HERE:
 app = Flask(__name__)
+MODEL_NAME = "qwen3-coder:480b-cloud"
 MEMORY_FILE = "memory.json"
 
 # Load or initialize memory file
