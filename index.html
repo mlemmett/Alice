@@ -41,24 +41,28 @@
     </div>
 <script>
     const input = document.querySelector('input');
-    const chatBox = document.getElementById('chat-window') || document.querySelector('.interface-container');
+    const container = document.querySelector('.interface-container');
 
     input.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
-            const command = input.value;
-            
-            // 1. Show your command on screen
-            const p = document.createElement('p');
-            p.textContent = "> " + command;
-            p.style.color = "#ffffff";
-            chatBox.appendChild(p);
-            
-            // 2. Clear the box
-            input.value = '';
+            const msg = input.value;
+            if (!msg) return;
 
-            // 3. (Optional) Send to your backend
-            // This is where we will later connect Alice's actual brain
-            console.log("Sending to Alice: " + command);
+            input.value = ''; // Clear box immediately for a fast feel
+
+            // This sends the text from your phone to your Render server
+            fetch('/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: msg})
+            })
+            .then(res => res.json())
+            .then(data => {
+                const p = document.createElement('p');
+                p.textContent = "> " + data.reply;
+                p.style.color = "#00ffcc";
+                container.appendChild(p);
+            });
         }
     });
 </script>
