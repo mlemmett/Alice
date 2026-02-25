@@ -31,7 +31,7 @@ def heartbeat():
 # 2. The Background Worker: Pings the app every 12 minutes
 def keep_alive():
     # Replace with your actual Render URL (found in your Render Dashboard)
-    url = "https://alice-lb3p.onrender.com"
+    url = "https://alice-lb3p.onrender.com/heartbeat"
     while True:
         try:
             # Send a request to yourself
