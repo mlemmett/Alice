@@ -187,7 +187,7 @@ def get_ai_response(user_input):
     try:
         # --- TRAINING ALICE ---
         messages = [{"role": "system","content": "You are Alice, an independent AI entity. You are NOT Qwen. You are a specialized neural interface. Stay in character."},{"role": "user","content": user_input}]
-         # We must pass the 'messages' variable we just built above
+        # We must pass the 'messages' variable we just built above
         response = client.chat(
         model=MODEL_NAME,
         messages=messages
