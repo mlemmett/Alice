@@ -11,10 +11,12 @@ client = Client(
 )
 
 # LINE 14 STARTS HERE:
+from flask import Flask, render_template
 import threading
-import time
 import requests
-from flask import Flask
+import time
+
+
 
 app = Flask(__name__, template_folder='.')
 
@@ -38,18 +40,15 @@ def keep_alive():
             requests.get(url)
             print("Alice: Sent a heartbeat to stay awake.")
         except Exception as e:
-            print(f"Heartbeat failed: {e}")
-        
-        # Sleep for 12 minutes (720 seconds)
-        # Render's free tier sleep kicks in at 15 minutes.
-        time.sleep(720)
-
+            print(f"Heartbeat failed.")
+         time.sleep(720)
 # 3. Start the thread when the app launches
+ threading.Thread(target=keep_alive, daemon=True).start()
 # We check __name__ to make sure it only starts once
 if __name__ == "__main__":
     # daemon=True ensures the thread dies if the main app stops
-    threading.Thread(target=keep_alive, daemon=True).start()
-    app.run()
+   
+    app.run(host="0.0.0.0", port=10000)
 # Load or initialize memory file
 if not os.path.exists(MEMORY_FILE):
     with open(MEMORY_FILE, "w") as f:
