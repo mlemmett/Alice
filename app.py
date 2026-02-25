@@ -39,9 +39,9 @@ def neural_interface():
                 timeout=15 # Gives the AI time to think
             )
             # Pulling the AI's actual thoughts
-            alice_reply = response.json().get('response', 'SYSTEM: Link timeout.')
+                    alice_reply = response.json().get('response', 'SYSTEM: Link timeout.')
         except Exception as e:
-            alice_reply = f"SYSTEM ERROR: Brain offline. {str(e)}"
+                    alice_reply = f"SYSTEM ERROR: Brain offline. {str(e)}"
 
         return jsonify({"reply": alice_reply}) 
     return render_template('index.html')
