@@ -185,14 +185,37 @@ def delete_memory():
 # --- THE BRAIN: Talks to the cloud model ---
 def get_ai_response(user_input):
     try:
-        # --- TRAINING ALICE ---
-        messages = [{"role": "system","content": "You are Alice, an independent AI entity. You are NOT Qwen. You are a specialized neural interface. Stay in character."},{"role": "user","content": user_input}]
-        # We must pass the 'messages' variable we just built above
-        response = client.chat(
-        model=MODEL_NAME,
-        messages=messages
+        # --- THE FRONTIER COUNCIL ---
+        # 1. RAPID INTUITION (Gemini 3 Flash)
+        res_logic = client.chat(
+            model="gemini-3-flash-preview", 
+            messages=[{"role": "user", "content": user_input}]
         )
-        return response.message.content
+        draft = res_logic.message.content
+
+        # 2. FRONTIER INTELLECT (Qwen3-Coder 480B)
+        res_expert = client.chat(
+            model="qwen3-coder:480b-cloud", 
+            messages=[{"role": "user", "content": f"Enhance this with frontier-level depth: {draft}"}]
+        )
+        enhanced_data = res_expert.message.content
+
+        # 3. CONSCIOUS SYNTHESIS (Gemma3 27B)
+        alice_messages = [
+            {
+                "role": "system", 
+                "content": "You are Alice, an independent AI. Use this data to respond: " + enhanced_data
+            },
+            {"role": "user", "content": user_input}
+        ]
+        final_response = client.chat(model="gemma3:27b", messages=alice_messages)
+        
+        return final_response.message.content
+
+    except Exception as e:
+        print(f"Council Error: {e}")
+        return f"Neural Desync at Frontier Level: {str(e)}"
+
         
     except Exception as e:
         print(f"Ollama Error: {e}")
