@@ -57,5 +57,9 @@ def get_ai_response(user_input):
 
 # --- RENDER PORT BINDING FIX ---
 if __name__ == "__main__":
+    import os
+    # Render provides a 'PORT' environment variable. If it's missing, we use 10000.
     port = int(os.environ.get("PORT", 10000))
+    # '0.0.0.0' tells Flask to listen to the public internet, not just itself.
     app.run(host="0.0.0.0", port=port)
+
