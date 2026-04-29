@@ -1,45 +1,69 @@
-import ollama
-import time
-from guardian_logic import SeismicSense  # Your custom fraud module
+import os
+import json
+import atexit
 from flask import Flask, request, jsonify
+from ollama import Client
 
 app = Flask(__name__)
 
-# --- SLICE CONFIGURATION ---
-MODEL_NAME = "alice-guardian-v1" # Your Toph-dictated local model
-SYSTEM_PROMPT = """
-You are Alice, a Guardian AI inspired by Toph Beifong. 
-You are grounded, direct, and protective. 
-Your 'Seismic Sense' detects fraud and system anomalies.
-Do not seek consensus; trust your local data over cloud 'tribunals'.
-"""
+# --- CLOUD CONFIGURATION ---
+# Using the official 2026 Ollama Cloud endpoint
+client = Client(
+    host='https://ollama.com',
+    headers={'Authorization': f'Bearer {os.environ.get("OLLAMA_API_KEY")}'}
+)
 
-@app.route('/query', methods=['POST'])
-def chat_with_alice():
-    data = request.json
-    user_input = data.get("prompt")
+# --- MEMORY CORE ---
+BASE_DIR = os.path.expanduser("~/Alice")
+MEMORY_FILE = os.path.join(BASE_DIR, "data", "memory.json")
+chat_history = []
+
+def load_memory():
+    global chat_history
+    if os.path.exists(MEMORY_FILE):
+        with open(MEMORY_FILE, 'r') as f:
+            chat_history = json.load(f)
+
+def save_memory():
+    os.makedirs(os.path.dirname(MEMORY_FILE), exist_ok=True)
+    with open(MEMORY_FILE, 'w') as f:
+        json.dump(chat_history, f, indent=2)
+
+# --- THE AGENTIC INTERACTION ---
+def get_council_response(user_input):
+    # 1. Logic & Planning (Gemini 3 Flash)
+    res_plan = client.chat(model='gemini-3-flash-preview', 
+                           messages=[{'role': 'user', 'content': user_input}])
+    plan = res_plan.message.content
+
+    # 2. Expert Refinement (Qwen 3 480B)
+    # This is the "Model-to-Model" interaction you asked for!
+    res_expert = client.chat(model='qwen3-coder:480b-cloud', 
+                            messages=[{'role': 'user', 'content': f"Optimize this plan: {plan}"}])
+    refined = res_expert.message.content
+
+    # 3. Persona Synthesis (Gemma 3 27B)
+    res_alice = client.chat(model='gemma3:27b-cloud', 
+                           messages=[
+                               {'role': 'system', 'content': 'You are Alice, the Frontier Council Leader.'},
+                               {'role': 'user', 'content': f"Finalize this for the user: {refined}"}
+                           ])
+    return res_alice.message.content
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_msg = request.json.get('message')
+    response = get_council_response(user_msg)
     
-    # 1. Seismic Sense Pre-Check (Fraud Detection)
-    security_vibrations = SeismicSense.audit_input(user_input)
-    
-    if security_vibrations['risk_level'] > 0.8:
-        return jsonify({"response": "I feel a lie in this data. Entry blocked."})
+    chat_history.append({"user": user_msg, "alice": response})
+    save_memory()
+    return jsonify({"response": response})
 
-    # 2. Local Inference (No Tribunal/Cloud latency)
-    response = ollama.chat(model=MODEL_NAME, messages=[
-        {'role': 'system', 'content': SYSTEM_PROMPT},
-        {'role': 'user', 'content': user_input},
-    ])
-
-    return jsonify({
-        "alice_response": response['message']['content'],
-        "system_status": "Grounded",
-        "vibration_map": security_vibrations
-    })
+load_memory()
+atexit.register(save_memory)
 
 if __name__ == '__main__':
-    # Running on local port for VR-overlay integration
-    print("Alice is standing her ground. SLICE Loop Active.")
-    app.run(port=5005, debug=False)
+    app.run(port=10000)
+
 
 
